@@ -1,8 +1,8 @@
 default:
-	g++ main.cpp glad.cpp -o gl -ldl -lglfw && ./gl
+	g++ main.cpp glad.cpp -o 3D -ldl -lglfw && ./3D $(NUM_VERTICES)
 
 compile:
-	g++ main.cpp glad.cpp -o gl -ldl -lglfw
+	g++ main.cpp glad.cpp -o 3D -ldl -lglfw
 
 run:
-	./gl
+	./3D $(NUM_VERTICES)
