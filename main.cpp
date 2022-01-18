@@ -338,9 +338,9 @@ int main(int argc, char *argv[]) {
         }
 
         if (is_revolving) {
-            vec3 cameraRight = cross(cameraFront, up);
-            cameraPos += cameraRight * cameraSpeed;
-            cameraFront = prism;
+            vec3 cameraRight = normalize(cross(cameraFront, up));
+            cameraPos += cameraRight * 0.1f;
+            cameraFront = prism - cameraPos;
         }
 
         glBindVertexArray(VAO);
