@@ -46,19 +46,32 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_I && action == GLFW_PRESS) {
         prism += normalize(cameraUp) * 0.1f;
-        model = translate(model, prism);
+        model = translate(model, normalize(cameraUp) * 0.1f);
     }
+
     if (key == GLFW_KEY_K && action == GLFW_PRESS) {
         prism += normalize(cameraUp) * -0.1f;
-        model = translate(model, prism);
+        model = translate(model, normalize(cameraUp) * -0.1f);
     }
+
     if (key == GLFW_KEY_J && action == GLFW_PRESS) {
-        prism += normalize(cameraFront) * 0.1f;
-        model = translate(model, prism);
+        prism += normalize(cross(cameraFront, cameraUp)) * -0.1f;
+        model = translate(model, normalize(cross(cameraFront, cameraUp)) * -0.1f);
     }
+
     if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+        prism += normalize(cross(cameraFront, cameraUp)) * 0.1f;
+        model = translate(model, normalize(cross(cameraFront, cameraUp)) * 0.1f);
+    }
+
+    if (key == GLFW_KEY_U && action == GLFW_PRESS) {
         prism += normalize(cameraFront) * -0.1f;
-        model = translate(model, prism);
+        model = translate(model, normalize(cameraFront) * -0.1f);
+    }
+
+    if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+        prism += normalize(cameraFront) * 0.1f;
+        model = translate(model, normalize(cameraFront) * 0.1f);
     }
 }
 
@@ -70,45 +83,27 @@ void processInput(GLFWwindow *window) {
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         cameraPos += cameraSpeed * cameraFront;
+
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         cameraPos -= cameraSpeed * cameraFront;
+
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         cameraPos += cameraSpeed * up;
+
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         cameraPos -= cameraSpeed * up;
 
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS)
         cameraPos = vec3(2.0f, 0.0f, 3.0f);
+
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
         cameraPos = vec3(0.0f, 2.0f, 2.0f);
-
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-        prism += normalize(cameraUp) * 0.1f;
-        model = translate(model, prism);
-    }
-    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-        prism += normalize(cameraUp) * -0.1f;
-        model = translate(model, prism);
-    }
-    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-        prism += normalize(cameraFront) * 0.1f;
-        model = translate(model, prism);
-    }
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        prism += normalize(cameraFront) * -0.1f;
-        model = translate(model, prism);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-        cameraPos = vec3(0.0f, 0.0f, -3.0f);
-
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
-        cameraPos = vec3(0.0f, 0.0f, 3.0f);
 }
 
 int main(int argc, char *argv[]) {
@@ -133,6 +128,7 @@ int main(int argc, char *argv[]) {
     cout << setprecision(2) << fixed;
 
     int idx = 0;
+
     bool connecting_color_flag = true;
     bool main_color_flag = true;
 
@@ -342,9 +338,9 @@ int main(int argc, char *argv[]) {
         }
 
         if (is_revolving) {
-            vec3 target = cameraTarget - cameraPos;
-            vec3 cameraRight = cross(target, up);
+            vec3 cameraRight = cross(cameraFront, up);
             cameraPos += cameraRight * cameraSpeed;
+            cameraFront = prism;
         }
 
         glBindVertexArray(VAO);
@@ -356,6 +352,7 @@ int main(int argc, char *argv[]) {
 
     glDeleteVertexArrays(1, &VAO); // Delete the VAO
     glDeleteBuffers(1, &VBO);      // Delete the VBO
-    glfwTerminate();               // Terminate GLFW, clearing any resources allocated by GLFW.
+
+    glfwTerminate(); // Terminate GLFW, clearing any resources allocated by GLFW.
     return 0;
 }
